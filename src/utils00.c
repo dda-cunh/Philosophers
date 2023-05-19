@@ -6,12 +6,22 @@
 /*   By: dda-cunh <dda-cunh@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/19 15:09:37 by dda-cunh          #+#    #+#             */
-/*   Updated: 2023/05/19 16:10:55 by dda-cunh         ###   ########.fr       */
+/*   Updated: 2023/05/19 20:24:21 by dda-cunh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../inc/philosophers.h"
-#include <stdio.h>
+
+unsigned long	get_time_ms(void)
+{
+	unsigned long	ms;
+	struct timeval	tv;
+
+	gettimeofday(&tv, NULL);
+	ms = (unsigned long)(tv.tv_sec)*1000
+		+ (unsigned long)(tv.tv_usec) / 1000;
+	return (ms);
+}
 
 static void	clean(t_table *table)
 {
@@ -22,7 +32,6 @@ static void	clean(t_table *table)
 		if (table->philos)
 			free(table->philos);
 	}
-	return ;
 }
 
 int	exit_(int status, t_table *table)
@@ -30,5 +39,9 @@ int	exit_(int status, t_table *table)
 	clean(table);
 	if (status == 1)
 		printf("Bad args\n");
+	else if (status == 2)
+		printf("Error on Malloc\n");
+	else if (status == 3)
+		printf("Error on mutex creation\n");
 	return (status);
 }

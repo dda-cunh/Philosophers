@@ -3,13 +3,15 @@ NAME		= 	philo
 
 CC 			= 	cc
 
-CFLAGS		= 	-Wall -Wextra -Werror
+INC_PATH	=	inc/
+
+CFLAGS		= 	-Wall -Wextra -Werror -I $(INC_PATH)
 
 RM 			= 	rm -f
 
 SRC_PATH	=	src/
 
-SRC_		= 	philosophers.c parser.c utils00.c
+SRC_		= 	philosophers.c parser.c task.c utils00.c
 
 SRC			=	$(addprefix $(SRC_PATH), $(SRC_))
 
@@ -20,7 +22,7 @@ GREEN		= 	\033[0;32m
 RESET		=	\033[0m
 
 $(NAME):		$(OBJ)
-				$(CC) $(OBJ) -o $(NAME) -pthread -g3 -fsanitize=address
+				$(CC) $(OBJ) -o $(NAME) -pthread -g3 -fsanitize=thread
 				make done
 
 $(OBJ):	 		$(SRC)
