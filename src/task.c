@@ -6,45 +6,57 @@
 /*   By: dda-cunh <dda-cunh@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/19 20:34:29 by dda-cunh          #+#    #+#             */
-/*   Updated: 2023/05/19 21:10:57 by dda-cunh         ###   ########.fr       */
+/*   Updated: 2023/05/20 00:19:12 by dda-cunh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../inc/philosophers.h"
 
-void	do_task(t_taskQueue *task)
-{
-	if (task->action.action == THINK)
-		printf("%lu %d is thinking\n", task->action.time, task->action.philo);
-	else if (task->action.action == EAT)
-		printf("%lu %d is eating\n", task->action.time, task->action.philo);
-	else if (task->action.action == SLEEP)
-		printf("%lu %d is sleeping\n", task->action.time, task->action.philo);
-	else if (task->action.action == PICK)
-		printf("%lu %d has taken a fork\n", task->action.time,
-			task->action.philo);
-	else if (task->action.action == DROP)
-		printf("%lu %d has dropped a fork\n", task->action.time,
-			task->action.philo);
-}
-
 void	queue_task(t_taskQueue **head, t_taskQueue	*task)
 {
-	if (head)
+	t_taskQueue	*current;
+
+	if (head && task)
 	{
 		if (*head)
 		{
-			while ((*head)->next)
-				(*head) = ((*head)->next);
-			(*head)->next = task;
+			current = *head;
+			while (current->next)
+				current = current->next;
+			current->next = task;
 		}
 		else
-			if (task)
-				free(task);
+			*head = task;
 	}
 	else
 		if (task)
 			free(task);
+}
+
+void	unqueue_task(t_taskQueue **t)
+{
+	t_taskQueue	*head;
+
+	head = (*t)->next;
+	free(*t);
+	*t = head;
+}
+
+void	do_task(t_taskQueue **t)
+{
+	if ((*t)->action.action == THINK)
+		printf("%lu %d is thinking\n", (*t)->action.time, (*t)->action.philo);
+	else if ((*t)->action.action == EAT)
+		printf("%lu %d is eating\n", (*t)->action.time, (*t)->action.philo);
+	else if ((*t)->action.action == SLEEP)
+		printf("%lu %d is sleeping\n", (*t)->action.time, (*t)->action.philo);
+	else if ((*t)->action.action == PICK)
+		printf("%lu %d has taken a fork\n", (*t)->action.time,
+			(*t)->action.philo);
+	else if ((*t)->action.action == DROP)
+		printf("%lu %d has dropped a fork\n", (*t)->action.time,
+			(*t)->action.philo);
+	unqueue_task(t);
 }
 
 t_taskQueue	*new_task(t_action action)

@@ -6,7 +6,7 @@
 /*   By: dda-cunh <dda-cunh@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/19 15:09:37 by dda-cunh          #+#    #+#             */
-/*   Updated: 2023/05/19 20:24:21 by dda-cunh         ###   ########.fr       */
+/*   Updated: 2023/05/20 00:40:24 by dda-cunh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,12 +25,29 @@ unsigned long	get_time_ms(void)
 
 static void	clean(t_table *table)
 {
+	int			i;
+	t_taskQueue	*old;
+
 	if (table)
 	{
 		if (table->forks)
+		{
+			i = -1;
+			while (++i < table->n)
+				pthread_mutex_destroy(&(table->forks[i]));
 			free(table->forks);
+		}
 		if (table->philos)
 			free(table->philos);
+		if (table->tasksq)
+		{
+			while (table->tasksq)
+			{
+				old = table->tasksq;
+				table->tasksq = table->tasksq->next;
+				free(old);
+			}
+		}
 	}
 }
 

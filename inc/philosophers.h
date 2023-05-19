@@ -6,7 +6,7 @@
 /*   By: dda-cunh <dda-cunh@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/19 14:39:37 by dda-cunh          #+#    #+#             */
-/*   Updated: 2023/05/19 21:11:30 by dda-cunh         ###   ########.fr       */
+/*   Updated: 2023/05/20 00:10:21 by dda-cunh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,6 +74,6 @@ unsigned long	get_time_ms(void);
 /*                                 task.c                                     */
 /* ************************************************************************** */
 void			queue_task(t_taskQueue **head, t_taskQueue	*task);
-void			do_task(t_taskQueue *task);
+void			do_task(t_taskQueue **task);
 t_taskQueue		*new_task(t_action action);
 #endif
