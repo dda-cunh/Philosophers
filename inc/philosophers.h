@@ -6,7 +6,7 @@
 /*   By: dda-cunh <dda-cunh@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/19 14:39:37 by dda-cunh          #+#    #+#             */
-/*   Updated: 2023/05/20 00:45:24 by dda-cunh         ###   ########.fr       */
+/*   Updated: 2023/05/20 18:51:17 by dda-cunh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,7 +25,8 @@ typedef enum e_state
 	EAT = 1,
 	SLEEP = 2,
 	PICK = 3,
-	DROP = 4
+	DROP = 4,
+	DEAD = 5
 }	t_state;
 
 typedef struct s_action
@@ -35,11 +36,12 @@ typedef struct s_action
 	unsigned long	time;
 }	t_action;
 
-typedef struct s_taskQueue
+typedef struct s_philos
 {
-	t_action			action;
-	struct s_taskQueue	*next;
-}	t_taskQueue;
+	int				n;
+	pthread_t		philo;
+	struct s_philos	*next;
+}	t_philos;
 
 typedef struct s_table
 {
@@ -48,10 +50,9 @@ typedef struct s_table
 	int				t_eat;
 	int				t_sleep;
 	int				n_eat;
-	int				curr_i;
 	unsigned long	start_time;
-	t_taskQueue		*tasksq;
-	pthread_t		*philos;
+	pthread_mutex_t	qmut;
+	t_philos		*philos;
 	pthread_mutex_t	*forks;
 }	t_table;
 
@@ -73,8 +74,10 @@ unsigned long	get_time_ms(void);
 /* ************************************************************************** */
 /*                                 task.c                                     */
 /* ************************************************************************** */
-void			queue_task(t_taskQueue **head, t_taskQueue	*task);
-void			unqueue_task(t_taskQueue **t);
-void			do_task(t_taskQueue **task);
-t_taskQueue		*new_task(t_action action);
+void			queue_philo(t_philos **head, t_philos	*task);
+void			do_task(t_action action, t_table *table);
+void			clear_philos(t_philos **t);
+void			*queue(void *args);
+t_philos		*new_philo(int n);
+
 #endif

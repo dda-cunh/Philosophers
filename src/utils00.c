@@ -6,7 +6,7 @@
 /*   By: dda-cunh <dda-cunh@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/19 15:09:37 by dda-cunh          #+#    #+#             */
-/*   Updated: 2023/05/20 00:40:24 by dda-cunh         ###   ########.fr       */
+/*   Updated: 2023/05/20 19:02:29 by dda-cunh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,7 +26,7 @@ unsigned long	get_time_ms(void)
 static void	clean(t_table *table)
 {
 	int			i;
-	t_taskQueue	*old;
+	t_philos	*old;
 
 	if (table)
 	{
@@ -38,13 +38,11 @@ static void	clean(t_table *table)
 			free(table->forks);
 		}
 		if (table->philos)
-			free(table->philos);
-		if (table->tasksq)
 		{
-			while (table->tasksq)
+			while (table->philos)
 			{
-				old = table->tasksq;
-				table->tasksq = table->tasksq->next;
+				old = table->philos;
+				table->philos = table->philos->next;
 				free(old);
 			}
 		}
@@ -60,5 +58,7 @@ int	exit_(int status, t_table *table)
 		printf("Error on Malloc\n");
 	else if (status == 3)
 		printf("Error on mutex creation\n");
+	else if (status == 4)
+		printf("Error on pthread creation\n");
 	return (status);
 }

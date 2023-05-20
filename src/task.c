@@ -6,67 +6,60 @@
 /*   By: dda-cunh <dda-cunh@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/19 20:34:29 by dda-cunh          #+#    #+#             */
-/*   Updated: 2023/05/20 00:19:12 by dda-cunh         ###   ########.fr       */
+/*   Updated: 2023/05/20 19:02:00 by dda-cunh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../inc/philosophers.h"
 
-void	queue_task(t_taskQueue **head, t_taskQueue	*task)
+void	queue_philo(t_philos **head, t_philos *philo)
 {
-	t_taskQueue	*current;
+	t_philos	*current;
 
-	if (head && task)
+	if (head && philo)
 	{
 		if (*head)
 		{
 			current = *head;
 			while (current->next)
 				current = current->next;
-			current->next = task;
+			current->next = philo;
 		}
 		else
-			*head = task;
+			*head = philo;
 	}
 	else
-		if (task)
-			free(task);
+		if (philo)
+			free(philo);
 }
 
-void	unqueue_task(t_taskQueue **t)
+void	do_task(t_action action, t_table *table)
 {
-	t_taskQueue	*head;
-
-	head = (*t)->next;
-	free(*t);
-	*t = head;
+	pthread_mutex_lock(&table->qmut);
+	if (action.action == THINK)
+		printf("%lu %d is thinking\n", action.time, action.philo);
+	else if (action.action == EAT)
+		printf("%lu %d is eating\n", action.time, action.philo);
+	else if (action.action == SLEEP)
+		printf("%lu %d is sleeping\n", action.time, action.philo);
+	else if (action.action == PICK)
+		printf("%lu %d has taken a fork\n", action.time,
+			action.philo);
+	else if (action.action == DROP)
+		printf("%lu %d has dropped a fork\n", action.time, action.philo);
+	else if (action.action == DEAD)
+		printf("%lu %d died\n", action.time, action.philo);
+	pthread_mutex_unlock(&table->qmut);
 }
 
-void	do_task(t_taskQueue **t)
+t_philos	*new_philo(int n)
 {
-	if ((*t)->action.action == THINK)
-		printf("%lu %d is thinking\n", (*t)->action.time, (*t)->action.philo);
-	else if ((*t)->action.action == EAT)
-		printf("%lu %d is eating\n", (*t)->action.time, (*t)->action.philo);
-	else if ((*t)->action.action == SLEEP)
-		printf("%lu %d is sleeping\n", (*t)->action.time, (*t)->action.philo);
-	else if ((*t)->action.action == PICK)
-		printf("%lu %d has taken a fork\n", (*t)->action.time,
-			(*t)->action.philo);
-	else if ((*t)->action.action == DROP)
-		printf("%lu %d has dropped a fork\n", (*t)->action.time,
-			(*t)->action.philo);
-	unqueue_task(t);
-}
+	t_philos	*philo;
 
-t_taskQueue	*new_task(t_action action)
-{
-	t_taskQueue	*task;
-
-	task = malloc(sizeof(t_taskQueue));
-	if (!task)
+	philo = malloc(sizeof(t_philos));
+	if (!philo)
 		return (NULL);
-	task->action = action;
-	task->next = NULL;
-	return (task);
+	philo->n = n;
+	philo->next = NULL;
+	return (philo);
 }
