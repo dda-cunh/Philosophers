@@ -6,32 +6,11 @@
 /*   By: dda-cunh <dda-cunh@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/19 20:34:29 by dda-cunh          #+#    #+#             */
-/*   Updated: 2023/05/20 19:02:00 by dda-cunh         ###   ########.fr       */
+/*   Updated: 2023/05/22 21:24:00 by dda-cunh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../inc/philosophers.h"
-
-void	queue_philo(t_philos **head, t_philos *philo)
-{
-	t_philos	*current;
-
-	if (head && philo)
-	{
-		if (*head)
-		{
-			current = *head;
-			while (current->next)
-				current = current->next;
-			current->next = philo;
-		}
-		else
-			*head = philo;
-	}
-	else
-		if (philo)
-			free(philo);
-}
 
 void	do_task(t_action action, t_table *table)
 {

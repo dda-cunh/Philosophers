@@ -6,11 +6,12 @@
 /*   By: dda-cunh <dda-cunh@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/18 15:32:33 by dda-cunh          #+#    #+#             */
-/*   Updated: 2023/05/20 19:14:49 by dda-cunh         ###   ########.fr       */
+/*   Updated: 2023/05/22 21:31:58 by dda-cunh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../inc/philosophers.h"
+#include <pthread.h>
 
 void	*eat(void *arg);
 
@@ -25,12 +26,43 @@ void	*think(void *arg)
 	return (NULL);
 }
 
+void	*sleep_(void *arg)
+{
+	t_table	*t;
+
+	t = (t_table *)arg;
+	do_task((t_action){t->philos->n, SLEEP, get_time_ms() - t->start_time}, t);
+	usleep(t->t_sleep);
+	think(t);
+	return (NULL);
+}
+
 void	*eat(void *arg)
 {
 	t_table	*t;
 
 	t = (t_table *)arg;
-	do_task((t_action){t->philos->n, EAT, get_time_ms() - t->start_time}, t);
+	if (t->philos->n == 1)
+	{
+		pthread_mutex_lock(&t->forks[t->n - 1]);
+		pthread_mutex_lock(&t->forks[t->philos->n - 1]);
+		do_task((t_action){t->philos->n, EAT, get_time_ms() - t->start_time},
+			t);
+		usleep(t->t_eat);
+		pthread_mutex_unlock(&t->forks[t->n - 1]);
+		pthread_mutex_unlock(&t->forks[t->philos->n - 1]);
+	}
+	else
+	{
+		pthread_mutex_lock(&t->forks[t->philos->n - 2]);
+		pthread_mutex_lock(&t->forks[t->philos->n - 1]);
+		do_task((t_action){t->philos->n, EAT, get_time_ms() - t->start_time},
+			t);
+		usleep(t->t_eat);
+		pthread_mutex_unlock(&t->forks[t->philos->n - 2]);
+		pthread_mutex_unlock(&t->forks[t->philos->n - 1]);
+	}
+	sleep_(t);
 	return (NULL);
 }
 
