@@ -6,7 +6,7 @@
 /*   By: dda-cunh <dda-cunh@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/19 14:39:37 by dda-cunh          #+#    #+#             */
-/*   Updated: 2023/05/22 21:24:23 by dda-cunh         ###   ########.fr       */
+/*   Updated: 2023/05/23 19:23:44 by dda-cunh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,16 +29,17 @@ typedef enum e_state
 	DEAD = 5
 }	t_state;
 
-typedef struct s_action
+typedef struct s_act
 {
 	int				philo;
 	t_state			action;
 	unsigned long	time;
-}	t_action;
+}	t_act;
 
 typedef struct s_philos
 {
 	int				n;
+	unsigned long	last_eat;
 	pthread_t		philo;
 	struct s_philos	*next;
 }	t_philos;
@@ -46,12 +47,14 @@ typedef struct s_philos
 typedef struct s_table
 {
 	int				n;
-	int				t_die;
-	int				t_eat;
-	int				t_sleep;
+	int				rip;
+	unsigned long	t_die;
+	unsigned long	t_eat;
+	unsigned long	t_sleep;
 	int				n_eat;
-	unsigned long	start_time;
+	unsigned long	s_time;
 	pthread_mutex_t	qmut;
+	t_philos		*philos_start;
 	t_philos		*philos;
 	pthread_mutex_t	*forks;
 }	t_table;
@@ -74,7 +77,7 @@ unsigned long	get_time_ms(void);
 /* ************************************************************************** */
 /*                                 task.c                                     */
 /* ************************************************************************** */
-void			do_task(t_action action, t_table *table);
+int				do_task(t_act action, t_table *table, t_philos *philo);
 t_philos		*new_philo(int n);
 
 #endif
