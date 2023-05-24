@@ -6,7 +6,7 @@
 /*   By: dda-cunh <dda-cunh@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/19 14:39:37 by dda-cunh          #+#    #+#             */
-/*   Updated: 2023/05/23 19:23:44 by dda-cunh         ###   ########.fr       */
+/*   Updated: 2023/05/24 19:01:05 by dda-cunh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,20 +19,26 @@
 # include <pthread.h>
 # include <sys/time.h>
 
+# define THINKING "is thinking"
+# define EATING "is eating"
+# define SLEEPING "is sleeping"
+# define PICKING "has taken a fork"
+# define DYING "died"
+
 typedef enum e_state
 {
 	THINK = 0,
 	EAT = 1,
 	SLEEP = 2,
 	PICK = 3,
-	DROP = 4,
-	DEAD = 5
+	DEAD = 4
 }	t_state;
 
 typedef struct s_act
 {
 	int				philo;
 	t_state			action;
+	char			*str;
 	unsigned long	time;
 }	t_act;
 
@@ -72,7 +78,7 @@ int				sisnum(const char *s);
 /*                                utils00.c                                   */
 /* ************************************************************************** */
 int				exit_(int status, t_table *table);
-unsigned long	get_time_ms(void);
+unsigned long	gtime(void);
 
 /* ************************************************************************** */
 /*                                 task.c                                     */

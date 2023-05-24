@@ -6,13 +6,13 @@
 /*   By: dda-cunh <dda-cunh@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/19 15:09:37 by dda-cunh          #+#    #+#             */
-/*   Updated: 2023/05/23 19:50:42 by dda-cunh         ###   ########.fr       */
+/*   Updated: 2023/05/24 18:09:06 by dda-cunh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../inc/philosophers.h"
 
-unsigned long	get_time_ms(void)
+unsigned long	gtime(void)
 {
 	unsigned long	ms;
 	struct timeval	tv;

@@ -6,48 +6,55 @@
 /*   By: dda-cunh <dda-cunh@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/18 15:32:33 by dda-cunh          #+#    #+#             */
-/*   Updated: 2023/05/23 20:31:49 by dda-cunh         ###   ########.fr       */
+/*   Updated: 2023/05/24 19:01:56 by dda-cunh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../inc/philosophers.h"
 
-void	*eat(void *arg);
-
 void	*eat(void *arg)
 {
-	pthread_mutex_t	*lock;
 	t_philos		*phi;
-	t_table			*tt;
-	t_table			t;
+	t_table			*t;
+	pthread_mutex_t	*lock1;
+	pthread_mutex_t	*lock2;
 
-	tt = (t_table *)arg;
-	phi = tt->philos;
-	t = (t_table){tt->n, tt->rip, tt->t_die, tt->t_eat, tt->t_sleep,
-		tt->n_eat, tt->s_time, tt->qmut, tt->philos_start, phi, tt->forks};
-	while (t.rip == 0)
+	t = (t_table *)arg;
+	phi = t->philos;
+	phi->last_eat = t->s_time;
+	if (t->n == 1)
 	{
+		do_task((t_act){phi->n, PICK, PICKING, (gtime() - t->s_time)}, t, phi);
+		usleep(t->t_die);
+		do_task((t_act){phi->n, DEAD, DYING, (gtime() - t->s_time)}, t, phi);
+		return (NULL);
+	}
+	if (t->n % 2)
+	{
+		lock1 = &t->forks[phi->n - 1];
 		if (phi->n == 1)
-			lock = (pthread_mutex_t []){t.forks[t.n - 1],
-				t.forks[0]};
+			lock2 = &t->forks[t->n - 1];
 		else
-			lock = (pthread_mutex_t []){t.forks[phi->n - 2],
-				t.forks[phi->n - 1]};
-		pthread_mutex_lock(&lock[0]);
-		do_task((t_act){phi->n, PICK, (get_time_ms() - t.s_time)}, &t, phi);
-		pthread_mutex_lock(&lock[1]);
-		do_task((t_act){phi->n, PICK, (get_time_ms() - t.s_time)}, &t, phi);
-		do_task((t_act){phi->n, EAT, (get_time_ms() - t.s_time)}, &t, phi);
-		usleep(t.t_eat);
-		pthread_mutex_unlock(&lock[0]);
-		do_task((t_act){phi->n, DROP, (get_time_ms() - t.s_time)}, &t, phi);
-		pthread_mutex_unlock(&lock[1]);
-		do_task((t_act){phi->n, DROP, (get_time_ms() - t.s_time)}, &t, phi);
-		if (do_task((t_act){phi->n, SLEEP, get_time_ms() - t.s_time}, &t, phi))
-			return (NULL);
-		usleep(t.t_sleep);
-		if (do_task((t_act){phi->n, THINK, get_time_ms() - t.s_time}, &t, phi))
-			return (NULL);
+			lock2 = &t->forks[phi->n - 2];
+	}
+	else
+	{
+		lock1 = &t->forks[phi->n - 2];
+		lock2 = &t->forks[phi->n - 1];
+	}
+	while (t->rip == 0)
+	{
+		pthread_mutex_lock(lock1);
+		do_task((t_act){phi->n, PICK, PICKING, (gtime() - t->s_time)}, t, phi);
+		pthread_mutex_lock(lock2);
+		do_task((t_act){phi->n, PICK, PICKING, (gtime() - t->s_time)}, t, phi);
+		do_task((t_act){phi->n, EAT, EATING, (gtime() - t->s_time)}, t, phi);
+		usleep(t->t_eat);
+		pthread_mutex_unlock(lock1);
+		pthread_mutex_unlock(lock2);
+		do_task((t_act){phi->n, SLEEP, SLEEPING, gtime() - t->s_time}, t, phi);
+		usleep(t->t_sleep);
+		do_task((t_act){phi->n, THINK, THINKING, gtime() - t->s_time}, t, phi);
 	}
 	return (NULL);
 }
@@ -63,9 +70,9 @@ int	philo(t_table *table)
 	while (++i <= table->n)
 	{
 		table->philos = philos;
-		philos->last_eat = table->s_time;
 		if (pthread_create(&philos->philo, NULL, &eat, table))
 			return (exit_(4, table));
+		usleep(1);
 		philos->next = new_philo(i + 1);
 		philos = philos->next;
 	}
@@ -92,14 +99,12 @@ int	main(int ac, char **av)
 		return (exit_(3, NULL));
 	if (ac == 5)
 		table = (t_table){stoi(av[1]), 0, stoi(av[2]) * 1000, stoi(av[3])
-			* 1000, stoi(av[4]) * 1000,
-			0, get_time_ms(), qmut, NULL, NULL,
+			* 1000, stoi(av[4]) * 1000, 0, gtime(), qmut, NULL, NULL,
 			malloc(sizeof(pthread_mutex_t) * stoi(av[1]))};
 	else
 		table = (t_table){stoi(av[1]), 0, stoi(av[2]) * 1000, stoi(av[3])
-			* 1000, stoi(av[4]) * 1000,
-			stoi(av[5]) * 1000, get_time_ms(), qmut, NULL, NULL,
-			malloc(sizeof(pthread_mutex_t) * stoi(av[1]))};
+			* 1000, stoi(av[4]) * 1000, stoi(av[5]), gtime(), qmut, NULL,
+			NULL, malloc(sizeof(pthread_mutex_t) * stoi(av[1]))};
 	if (!table.forks)
 		return (exit_(2, &table));
 	i = -1;
