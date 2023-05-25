@@ -6,42 +6,40 @@
 /*   By: dda-cunh <dda-cunh@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/18 15:32:33 by dda-cunh          #+#    #+#             */
-/*   Updated: 2023/05/25 14:31:02 by dda-cunh         ###   ########.fr       */
+/*   Updated: 2023/05/25 17:29:54 by dda-cunh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../inc/philosophers.h"
 
-void	*cycle(void *arg)
+static void	*cycle(void *arg)
 {
-	t_philos		*phi;
-	t_table			*t;
+	t_philos		*p;
 
-	t = (t_table *)arg;
-	phi = t->philos;
-	phi->n_eat = t->n_eat;
-	if (phi->n_eat == 0)
-		phi->n_eat = 1;
-	if (t->n == 1)
+	p = (t_philos *)arg;
+	p->n_eat = p->t->n_eat;
+	if (p->n_eat == 0)
+		p->n_eat = 1;
+	if (p->t->n == 1)
 	{
-		do_task((t_act){phi->n, PICK, PI, (gtime() - t->s_time)}, t, phi);
-		usleep(t->t_die);
-		do_task((t_act){phi->n, DEAD, DY, (gtime() - t->s_time)}, t, phi);
+		do_task((t_act){p->n, PICK, PI, (gtime() - p->t->s_time)}, p->t, p);
+		usleep(p->t->t_die);
+		do_task((t_act){p->n, DEAD, DY, (gtime() - p->t->s_time)}, p->t, p);
 		return (NULL);
 	}
-	while (t->rip == 0 && phi->n_eat)
+	while (p->n_eat)
 	{
-		if (eat(t, phi))
+		if (eat(p->t, p))
 			break ;
-		if (sleep_(t, phi))
+		if (sleep_(p->t, p))
 			break ;
-		if (do_task((t_act){phi->n, THINK, TH, gtime() - t->s_time}, t, phi))
+		if (do_task((t_act){p->n, THINK, TH, gtime() - p->t->s_time}, p->t, p))
 			break ;
 	}
 	return (NULL);
 }
 
-int	philo(t_table *table)
+static int	philo(t_table *table)
 {
 	t_philos	*philos;
 	int			i;
@@ -51,11 +49,10 @@ int	philo(t_table *table)
 	i = 0;
 	while (++i <= table->n)
 	{
-		table->philos = philos;
 		philos->last_eat = table->s_time;
-		if (pthread_create(&philos->philo, NULL, &cycle, table))
+		philos->t = table;
+		if (pthread_create(&philos->philo, NULL, &cycle, philos))
 			return (exit_(4, table));
-		usleep(1);
 		philos->next = new_philo(i + 1);
 		philos = philos->next;
 	}
@@ -66,7 +63,6 @@ int	philo(t_table *table)
 		pthread_join(philos->philo, NULL);
 		philos = philos->next;
 	}
-	table->philos = table->philos_start;
 	return (exit_(0, table));
 }
 
@@ -81,12 +77,12 @@ int	main(int ac, char **av)
 	if (pthread_mutex_init(&qmut, NULL))
 		return (exit_(3, NULL));
 	if (ac == 5)
-		table = (t_table){stoi(av[1]), 0, stoi(av[2]) * 1000, stoi(av[3])
-			* 1000, stoi(av[4]) * 1000, 0, gtime(), qmut, NULL, NULL,
+		table = (t_table){stoi(av[1]), stoi(av[2]) * 1000, stoi(av[3])
+			* 1000, stoi(av[4]) * 1000, 0, gtime(), qmut, NULL,
 			malloc(sizeof(pthread_mutex_t) * stoi(av[1]))};
 	else
-		table = (t_table){stoi(av[1]), 0, stoi(av[2]) * 1000, stoi(av[3])
-			* 1000, stoi(av[4]) * 1000, stoi(av[5]), gtime(), qmut, NULL,
+		table = (t_table){stoi(av[1]), stoi(av[2]) * 1000, stoi(av[3])
+			* 1000, stoi(av[4]) * 1000, stoi(av[5]), gtime(), qmut,
 			NULL, malloc(sizeof(pthread_mutex_t) * stoi(av[1]))};
 	if (!table.forks)
 		return (exit_(2, &table));

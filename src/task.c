@@ -6,7 +6,7 @@
 /*   By: dda-cunh <dda-cunh@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/19 20:34:29 by dda-cunh          #+#    #+#             */
-/*   Updated: 2023/05/25 14:30:13 by dda-cunh         ###   ########.fr       */
+/*   Updated: 2023/05/25 18:00:47 by dda-cunh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,9 @@ int	eat(t_table *t, t_philos *phi)
 {
 	pthread_mutex_t	*lock1;
 	pthread_mutex_t	*lock2;
-
+	pthread_mutex_lock(&t->qmut);
+	printf("N:\t%d\nLOCK1:\t%d\nLOCK2:\t%d\n", phi->n, i_lock(t, phi, 'f'), i_lock(t, phi, 's'));
+	pthread_mutex_unlock(&t->qmut);
 	lock1 = &t->forks[i_lock(t, phi, 'f')];
 	lock2 = &t->forks[i_lock(t, phi, 's')];
 	pthread_mutex_lock(lock1);
@@ -40,16 +42,18 @@ int	eat(t_table *t, t_philos *phi)
 
 int	do_task(t_act action, t_table *table, t_philos *philo)
 {
+	static int	rip = 0;
+
 	pthread_mutex_lock(&table->qmut);
-	if (table->rip == 0)
+	if (rip == 0)
 	{
-		if (gtime() - philo->last_eat >= table->t_die)
+		if ((gtime() - philo->last_eat) >= table->t_die)
 		{
-			table->rip = 1;
+			rip = 1;
 			action.action = DEAD;
 			action.str = DY;
 		}
-		printf("[%lu]\t%d %s\n", action.time / 1000, action.philo, action.str);
+		printf("%lu\t%d\t%s\n", action.time / 1000, action.philo, action.str);
 		if (action.action == EAT)
 		{
 			if (table->n_eat)
@@ -58,5 +62,5 @@ int	do_task(t_act action, t_table *table, t_philos *philo)
 		}
 	}
 	pthread_mutex_unlock(&table->qmut);
-	return (table->rip);
+	return (rip);
 }

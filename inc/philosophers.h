@@ -6,7 +6,7 @@
 /*   By: dda-cunh <dda-cunh@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/19 14:39:37 by dda-cunh          #+#    #+#             */
-/*   Updated: 2023/05/25 14:36:25 by dda-cunh         ###   ########.fr       */
+/*   Updated: 2023/05/25 17:24:28 by dda-cunh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,6 +24,8 @@
 # define SL "is sleeping"
 # define PI "has taken a fork"
 # define DY "died"
+
+typedef struct s_table	t_table;
 
 typedef enum e_state
 {
@@ -48,13 +50,13 @@ typedef struct s_philos
 	int				n_eat;
 	unsigned long	last_eat;
 	pthread_t		philo;
+	t_table			*t;
 	struct s_philos	*next;
 }	t_philos;
 
 typedef struct s_table
 {
 	int				n;
-	int				rip;
 	unsigned long	t_die;
 	unsigned long	t_eat;
 	unsigned long	t_sleep;
@@ -62,7 +64,6 @@ typedef struct s_table
 	unsigned long	s_time;
 	pthread_mutex_t	qmut;
 	t_philos		*philos_start;
-	t_philos		*philos;
 	pthread_mutex_t	*forks;
 }	t_table;
 
@@ -82,7 +83,7 @@ int				sisint(const char *s);
 int				sisnum(const char *s);
 
 /* ************************************************************************** */
-/*                                utils00.c                                   */
+/*                                  utils.c                                   */
 /* ************************************************************************** */
 int				i_lock(t_table *t, t_philos *phi, char fos);
 int				exit_(int status, t_table *table);

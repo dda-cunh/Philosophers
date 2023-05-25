@@ -6,7 +6,7 @@
 /*   By: dda-cunh <dda-cunh@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/19 15:09:37 by dda-cunh          #+#    #+#             */
-/*   Updated: 2023/05/25 14:15:04 by dda-cunh         ###   ########.fr       */
+/*   Updated: 2023/05/25 17:06:23 by dda-cunh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,12 +37,12 @@ static void	clean(t_table *table)
 				pthread_mutex_destroy(&(table->forks[i]));
 			free(table->forks);
 		}
-		if (table->philos)
+		if (table->philos_start)
 		{
-			while (table->philos)
+			while (table->philos_start)
 			{
-				old = table->philos;
-				table->philos = table->philos->next;
+				old = table->philos_start;
+				table->philos_start = table->philos_start->next;
 				free(old);
 			}
 		}
