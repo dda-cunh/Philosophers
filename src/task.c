@@ -6,7 +6,7 @@
 /*   By: dda-cunh <dda-cunh@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/19 20:34:29 by dda-cunh          #+#    #+#             */
-/*   Updated: 2023/05/25 18:00:47 by dda-cunh         ###   ########.fr       */
+/*   Updated: 2023/05/25 20:35:47 by dda-cunh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,19 +22,19 @@ int	sleep_(t_table *t, t_philos *phi)
 
 int	eat(t_table *t, t_philos *phi)
 {
+	unsigned long	interval;
 	pthread_mutex_t	*lock1;
 	pthread_mutex_t	*lock2;
-	pthread_mutex_lock(&t->qmut);
-	printf("N:\t%d\nLOCK1:\t%d\nLOCK2:\t%d\n", phi->n, i_lock(t, phi, 'f'), i_lock(t, phi, 's'));
-	pthread_mutex_unlock(&t->qmut);
+
 	lock1 = &t->forks[i_lock(t, phi, 'f')];
 	lock2 = &t->forks[i_lock(t, phi, 's')];
 	pthread_mutex_lock(lock1);
 	do_task((t_act){phi->n, PICK, PI, (gtime() - t->s_time)}, t, phi);
 	pthread_mutex_lock(lock2);
+	interval = gtime();
 	do_task((t_act){phi->n, PICK, PI, (gtime() - t->s_time)}, t, phi);
 	do_task((t_act){phi->n, EAT, EA, (gtime() - t->s_time)}, t, phi);
-	usleep(t->t_eat);
+	usleep(t->t_eat - (gtime() - interval) / 1000);
 	pthread_mutex_unlock(lock1);
 	pthread_mutex_unlock(lock2);
 	return (0);

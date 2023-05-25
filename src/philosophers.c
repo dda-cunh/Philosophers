@@ -6,7 +6,7 @@
 /*   By: dda-cunh <dda-cunh@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/18 15:32:33 by dda-cunh          #+#    #+#             */
-/*   Updated: 2023/05/25 17:29:54 by dda-cunh         ###   ########.fr       */
+/*   Updated: 2023/05/25 20:26:48 by dda-cunh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,6 +47,7 @@ static int	philo(t_table *table)
 	table->philos_start = new_philo(1);
 	philos = table->philos_start;
 	i = 0;
+	table->s_time = gtime();
 	while (++i <= table->n)
 	{
 		philos->last_eat = table->s_time;
@@ -78,11 +79,11 @@ int	main(int ac, char **av)
 		return (exit_(3, NULL));
 	if (ac == 5)
 		table = (t_table){stoi(av[1]), stoi(av[2]) * 1000, stoi(av[3])
-			* 1000, stoi(av[4]) * 1000, 0, gtime(), qmut, NULL,
+			* 1000, stoi(av[4]) * 1000, 0, 0, qmut, NULL,
 			malloc(sizeof(pthread_mutex_t) * stoi(av[1]))};
 	else
 		table = (t_table){stoi(av[1]), stoi(av[2]) * 1000, stoi(av[3])
-			* 1000, stoi(av[4]) * 1000, stoi(av[5]), gtime(), qmut,
+			* 1000, stoi(av[4]) * 1000, stoi(av[5]), 0, qmut,
 			NULL, malloc(sizeof(pthread_mutex_t) * stoi(av[1]))};
 	if (!table.forks)
 		return (exit_(2, &table));
