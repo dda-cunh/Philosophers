@@ -6,55 +6,37 @@
 /*   By: dda-cunh <dda-cunh@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/18 15:32:33 by dda-cunh          #+#    #+#             */
-/*   Updated: 2023/05/24 19:01:56 by dda-cunh         ###   ########.fr       */
+/*   Updated: 2023/05/25 14:31:02 by dda-cunh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../inc/philosophers.h"
 
-void	*eat(void *arg)
+void	*cycle(void *arg)
 {
 	t_philos		*phi;
 	t_table			*t;
-	pthread_mutex_t	*lock1;
-	pthread_mutex_t	*lock2;
 
 	t = (t_table *)arg;
 	phi = t->philos;
-	phi->last_eat = t->s_time;
+	phi->n_eat = t->n_eat;
+	if (phi->n_eat == 0)
+		phi->n_eat = 1;
 	if (t->n == 1)
 	{
-		do_task((t_act){phi->n, PICK, PICKING, (gtime() - t->s_time)}, t, phi);
+		do_task((t_act){phi->n, PICK, PI, (gtime() - t->s_time)}, t, phi);
 		usleep(t->t_die);
-		do_task((t_act){phi->n, DEAD, DYING, (gtime() - t->s_time)}, t, phi);
+		do_task((t_act){phi->n, DEAD, DY, (gtime() - t->s_time)}, t, phi);
 		return (NULL);
 	}
-	if (t->n % 2)
+	while (t->rip == 0 && phi->n_eat)
 	{
-		lock1 = &t->forks[phi->n - 1];
-		if (phi->n == 1)
-			lock2 = &t->forks[t->n - 1];
-		else
-			lock2 = &t->forks[phi->n - 2];
-	}
-	else
-	{
-		lock1 = &t->forks[phi->n - 2];
-		lock2 = &t->forks[phi->n - 1];
-	}
-	while (t->rip == 0)
-	{
-		pthread_mutex_lock(lock1);
-		do_task((t_act){phi->n, PICK, PICKING, (gtime() - t->s_time)}, t, phi);
-		pthread_mutex_lock(lock2);
-		do_task((t_act){phi->n, PICK, PICKING, (gtime() - t->s_time)}, t, phi);
-		do_task((t_act){phi->n, EAT, EATING, (gtime() - t->s_time)}, t, phi);
-		usleep(t->t_eat);
-		pthread_mutex_unlock(lock1);
-		pthread_mutex_unlock(lock2);
-		do_task((t_act){phi->n, SLEEP, SLEEPING, gtime() - t->s_time}, t, phi);
-		usleep(t->t_sleep);
-		do_task((t_act){phi->n, THINK, THINKING, gtime() - t->s_time}, t, phi);
+		if (eat(t, phi))
+			break ;
+		if (sleep_(t, phi))
+			break ;
+		if (do_task((t_act){phi->n, THINK, TH, gtime() - t->s_time}, t, phi))
+			break ;
 	}
 	return (NULL);
 }
@@ -64,13 +46,14 @@ int	philo(t_table *table)
 	t_philos	*philos;
 	int			i;
 
+	table->philos_start = new_philo(1);
+	philos = table->philos_start;
 	i = 0;
-	philos = new_philo(1);
-	table->philos_start = philos;
 	while (++i <= table->n)
 	{
 		table->philos = philos;
-		if (pthread_create(&philos->philo, NULL, &eat, table))
+		philos->last_eat = table->s_time;
+		if (pthread_create(&philos->philo, NULL, &cycle, table))
 			return (exit_(4, table));
 		usleep(1);
 		philos->next = new_philo(i + 1);

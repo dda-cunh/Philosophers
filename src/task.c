@@ -6,40 +6,57 @@
 /*   By: dda-cunh <dda-cunh@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/19 20:34:29 by dda-cunh          #+#    #+#             */
-/*   Updated: 2023/05/24 19:09:12 by dda-cunh         ###   ########.fr       */
+/*   Updated: 2023/05/25 14:30:13 by dda-cunh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../inc/philosophers.h"
 
+int	sleep_(t_table *t, t_philos *phi)
+{
+	if (do_task((t_act){phi->n, SLEEP, SL, gtime() - t->s_time}, t, phi))
+		return (1);
+	usleep(t->t_sleep);
+	return (0);
+}
+
+int	eat(t_table *t, t_philos *phi)
+{
+	pthread_mutex_t	*lock1;
+	pthread_mutex_t	*lock2;
+
+	lock1 = &t->forks[i_lock(t, phi, 'f')];
+	lock2 = &t->forks[i_lock(t, phi, 's')];
+	pthread_mutex_lock(lock1);
+	do_task((t_act){phi->n, PICK, PI, (gtime() - t->s_time)}, t, phi);
+	pthread_mutex_lock(lock2);
+	do_task((t_act){phi->n, PICK, PI, (gtime() - t->s_time)}, t, phi);
+	do_task((t_act){phi->n, EAT, EA, (gtime() - t->s_time)}, t, phi);
+	usleep(t->t_eat);
+	pthread_mutex_unlock(lock1);
+	pthread_mutex_unlock(lock2);
+	return (0);
+}
+
 int	do_task(t_act action, t_table *table, t_philos *philo)
 {
 	pthread_mutex_lock(&table->qmut);
-	action.time /= 1000;
 	if (table->rip == 0)
 	{
 		if (gtime() - philo->last_eat >= table->t_die)
 		{
 			table->rip = 1;
 			action.action = DEAD;
-			action.str = DYING;
+			action.str = DY;
 		}
-		printf("[%lu]\t%d %s\n", action.time, action.philo, action.str);
+		printf("[%lu]\t%d %s\n", action.time / 1000, action.philo, action.str);
 		if (action.action == EAT)
+		{
+			if (table->n_eat)
+				philo->n_eat--;
 			philo->last_eat = gtime();
+		}
 	}
 	pthread_mutex_unlock(&table->qmut);
 	return (table->rip);
-}
-
-t_philos	*new_philo(int n)
-{
-	t_philos	*philo;
-
-	philo = malloc(sizeof(t_philos));
-	if (!philo)
-		return (NULL);
-	philo->n = n;
-	philo->next = NULL;
-	return (philo);
 }

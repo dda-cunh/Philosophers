@@ -6,7 +6,7 @@
 /*   By: dda-cunh <dda-cunh@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/19 14:39:37 by dda-cunh          #+#    #+#             */
-/*   Updated: 2023/05/24 19:01:05 by dda-cunh         ###   ########.fr       */
+/*   Updated: 2023/05/25 14:36:25 by dda-cunh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,11 +19,11 @@
 # include <pthread.h>
 # include <sys/time.h>
 
-# define THINKING "is thinking"
-# define EATING "is eating"
-# define SLEEPING "is sleeping"
-# define PICKING "has taken a fork"
-# define DYING "died"
+# define TH "is thinking"
+# define EA "is eating"
+# define SL "is sleeping"
+# define PI "has taken a fork"
+# define DY "died"
 
 typedef enum e_state
 {
@@ -45,6 +45,7 @@ typedef struct s_act
 typedef struct s_philos
 {
 	int				n;
+	int				n_eat;
 	unsigned long	last_eat;
 	pthread_t		philo;
 	struct s_philos	*next;
@@ -66,6 +67,12 @@ typedef struct s_table
 }	t_table;
 
 /* ************************************************************************** */
+/*                                                                            */
+/*                          MAIN: philosophers.c                              */
+/*                                                                            */
+/* ************************************************************************** */
+
+/* ************************************************************************** */
 /*                                 parser.c                                   */
 /* ************************************************************************** */
 int				sncmp(const char *s1, const char *s2, unsigned int n);
@@ -77,13 +84,16 @@ int				sisnum(const char *s);
 /* ************************************************************************** */
 /*                                utils00.c                                   */
 /* ************************************************************************** */
+int				i_lock(t_table *t, t_philos *phi, char fos);
 int				exit_(int status, t_table *table);
+t_philos		*new_philo(int n);
 unsigned long	gtime(void);
 
 /* ************************************************************************** */
 /*                                 task.c                                     */
 /* ************************************************************************** */
 int				do_task(t_act action, t_table *table, t_philos *philo);
-t_philos		*new_philo(int n);
+int				sleep_(t_table *t, t_philos *phi);
+int				eat(t_table *t, t_philos *phi);
 
 #endif

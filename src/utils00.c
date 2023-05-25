@@ -6,7 +6,7 @@
 /*   By: dda-cunh <dda-cunh@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/19 15:09:37 by dda-cunh          #+#    #+#             */
-/*   Updated: 2023/05/24 18:09:06 by dda-cunh         ###   ########.fr       */
+/*   Updated: 2023/05/25 14:15:04 by dda-cunh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,4 +61,42 @@ int	exit_(int status, t_table *table)
 	else if (status == 4)
 		printf("Error on pthread creation\n");
 	return (status);
+}
+
+t_philos	*new_philo(int n)
+{
+	t_philos	*philo;
+
+	philo = malloc(sizeof(t_philos));
+	if (!philo)
+		return (NULL);
+	philo->n = n;
+	philo->next = NULL;
+	return (philo);
+}
+
+int	i_lock(t_table *t, t_philos *phi, char fos)
+{
+	int	first;
+	int	second;
+
+	if (phi->n % 2)
+	{
+		first = phi->n - 1;
+		if (phi->n == 1)
+			second = t->n - 1;
+		else
+			second = phi->n - 2;
+	}
+	else
+	{
+		first = phi->n - 2;
+		second = phi->n - 1;
+	}
+	if (fos == 'f')
+		return (first);
+	else if (fos == 's')
+		return (second);
+	else
+		return (-1);
 }
