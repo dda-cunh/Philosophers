@@ -6,7 +6,7 @@
 /*   By: dda-cunh <dda-cunh@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/19 15:02:12 by dda-cunh          #+#    #+#             */
-/*   Updated: 2023/05/19 19:05:57 by dda-cunh         ###   ########.fr       */
+/*   Updated: 2023/05/27 13:53:22 by dda-cunh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -90,7 +90,7 @@ int	args_parser(int ac, char **av)
 	{
 		i = 0;
 		while (++i < ac)
-			if (!sisint(av[i]) || !*av[i])
+			if (!*av[i] || !sisint(av[i]) || stoi(av[i]) < 0)
 				return (1);
 	}
 	else

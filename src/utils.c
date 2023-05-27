@@ -6,7 +6,7 @@
 /*   By: dda-cunh <dda-cunh@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/19 15:09:37 by dda-cunh          #+#    #+#             */
-/*   Updated: 2023/05/25 19:11:47 by dda-cunh         ###   ########.fr       */
+/*   Updated: 2023/05/27 13:05:45 by dda-cunh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,7 +26,6 @@ unsigned long	gtime(void)
 static void	clean(t_table *table)
 {
 	int			i;
-	t_philos	*old;
 
 	if (table)
 	{
@@ -37,15 +36,8 @@ static void	clean(t_table *table)
 				pthread_mutex_destroy(&(table->forks[i]));
 			free(table->forks);
 		}
-		if (table->philos_start)
-		{
-			while (table->philos_start)
-			{
-				old = table->philos_start;
-				table->philos_start = table->philos_start->next;
-				free(old);
-			}
-		}
+		if (table->philos)
+			free(table->philos);
 	}
 }
 
@@ -60,19 +52,23 @@ int	exit_(int status, t_table *table)
 		printf("Error on mutex creation\n");
 	else if (status == 4)
 		printf("Error on pthread creation\n");
+	else if (status == 5)
+		printf("Error on pthread join\n");
 	return (status);
 }
 
-t_philos	*new_philo(int n)
+t_philos	*init_philo(t_table *table)
 {
-	t_philos	*philo;
+	int			i;
+	t_philos	*phi;
 
-	philo = malloc(sizeof(t_philos));
-	if (!philo)
+	phi = malloc(sizeof(t_philos) * table->n);
+	if (!phi)
 		return (NULL);
-	philo->n = n;
-	philo->next = NULL;
-	return (philo);
+	i = -1;
+	while (++i < table->n)
+		phi[i] = (t_philos){i + 1, table->n_eat, table->s_time, 0, table};
+	return (phi);
 }
 
 int	i_lock(t_table *t, t_philos *phi, char fos)

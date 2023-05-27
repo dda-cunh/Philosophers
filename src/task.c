@@ -6,7 +6,7 @@
 /*   By: dda-cunh <dda-cunh@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/19 20:34:29 by dda-cunh          #+#    #+#             */
-/*   Updated: 2023/05/25 20:35:47 by dda-cunh         ###   ########.fr       */
+/*   Updated: 2023/05/27 13:29:52 by dda-cunh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,6 @@ int	sleep_(t_table *t, t_philos *phi)
 
 int	eat(t_table *t, t_philos *phi)
 {
-	unsigned long	interval;
 	pthread_mutex_t	*lock1;
 	pthread_mutex_t	*lock2;
 
@@ -31,10 +30,9 @@ int	eat(t_table *t, t_philos *phi)
 	pthread_mutex_lock(lock1);
 	do_task((t_act){phi->n, PICK, PI, (gtime() - t->s_time)}, t, phi);
 	pthread_mutex_lock(lock2);
-	interval = gtime();
 	do_task((t_act){phi->n, PICK, PI, (gtime() - t->s_time)}, t, phi);
 	do_task((t_act){phi->n, EAT, EA, (gtime() - t->s_time)}, t, phi);
-	usleep(t->t_eat - (gtime() - interval) / 1000);
+	usleep(t->t_eat);
 	pthread_mutex_unlock(lock1);
 	pthread_mutex_unlock(lock2);
 	return (0);

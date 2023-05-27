@@ -6,7 +6,7 @@
 /*   By: dda-cunh <dda-cunh@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/18 15:32:33 by dda-cunh          #+#    #+#             */
-/*   Updated: 2023/05/25 20:26:48 by dda-cunh         ###   ########.fr       */
+/*   Updated: 2023/05/27 14:41:51 by dda-cunh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,10 +15,10 @@
 static void	*cycle(void *arg)
 {
 	t_philos		*p;
+	unsigned long	interval;
 
 	p = (t_philos *)arg;
-	p->n_eat = p->t->n_eat;
-	if (p->n_eat == 0)
+	if (p->t->n_eat == 0)
 		p->n_eat = 1;
 	if (p->t->n == 1)
 	{
@@ -33,37 +33,33 @@ static void	*cycle(void *arg)
 			break ;
 		if (sleep_(p->t, p))
 			break ;
-		if (do_task((t_act){p->n, THINK, TH, gtime() - p->t->s_time}, p->t, p))
+		interval = gtime();
+		if (do_task((t_act){p->n, THINK, TH, interval - p->t->s_time}, p->t, p))
 			break ;
+		usleep((p->t->n * 250) - (gtime() - interval) / 1000);
 	}
 	return (NULL);
 }
 
 static int	philo(t_table *table)
 {
-	t_philos	*philos;
 	int			i;
 
-	table->philos_start = new_philo(1);
-	philos = table->philos_start;
-	i = 0;
 	table->s_time = gtime();
-	while (++i <= table->n)
-	{
-		philos->last_eat = table->s_time;
-		philos->t = table;
-		if (pthread_create(&philos->philo, NULL, &cycle, philos))
-			return (exit_(4, table));
-		philos->next = new_philo(i + 1);
-		philos = philos->next;
-	}
+	table->philos = init_philo(table);
+	if (!table->philos)
+		return (exit_(2, table));
 	i = -1;
-	philos = table->philos_start;
 	while (++i < table->n)
 	{
-		pthread_join(philos->philo, NULL);
-		philos = philos->next;
+		if (pthread_create(&table->philos[i].philo, NULL, &cycle,
+				&table->philos[i]))
+			return (exit_(4, table));
 	}
+	i = -1;
+	while (++i < table->n)
+		if (pthread_join(table->philos[i].philo, NULL))
+			return (exit_(5, table));
 	return (exit_(0, table));
 }
 
@@ -78,13 +74,13 @@ int	main(int ac, char **av)
 	if (pthread_mutex_init(&qmut, NULL))
 		return (exit_(3, NULL));
 	if (ac == 5)
-		table = (t_table){stoi(av[1]), stoi(av[2]) * 1000, stoi(av[3])
-			* 1000, stoi(av[4]) * 1000, 0, 0, qmut, NULL,
+		table = (t_table){stoi(av[1]), 0, stoi(av[2]) * 1000, stoi(av[3])
+			* 1000, stoi(av[4]) * 1000, 0, qmut, NULL,
 			malloc(sizeof(pthread_mutex_t) * stoi(av[1]))};
 	else
-		table = (t_table){stoi(av[1]), stoi(av[2]) * 1000, stoi(av[3])
-			* 1000, stoi(av[4]) * 1000, stoi(av[5]), 0, qmut,
-			NULL, malloc(sizeof(pthread_mutex_t) * stoi(av[1]))};
+		table = (t_table){stoi(av[1]), stoi(av[5]), stoi(av[2]) * 1000, stoi(av[3]) * 1000,
+			stoi(av[4]) * 1000, 0, qmut, NULL,
+			malloc(sizeof(pthread_mutex_t) * stoi(av[1]))};
 	if (!table.forks)
 		return (exit_(2, &table));
 	i = -1;
