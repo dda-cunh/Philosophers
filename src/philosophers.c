@@ -6,7 +6,7 @@
 /*   By: dda-cunh <dda-cunh@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/18 15:32:33 by dda-cunh          #+#    #+#             */
-/*   Updated: 2023/05/27 14:41:51 by dda-cunh         ###   ########.fr       */
+/*   Updated: 2023/05/28 05:12:15 by dda-cunh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -78,8 +78,8 @@ int	main(int ac, char **av)
 			* 1000, stoi(av[4]) * 1000, 0, qmut, NULL,
 			malloc(sizeof(pthread_mutex_t) * stoi(av[1]))};
 	else
-		table = (t_table){stoi(av[1]), stoi(av[5]), stoi(av[2]) * 1000, stoi(av[3]) * 1000,
-			stoi(av[4]) * 1000, 0, qmut, NULL,
+		table = (t_table){stoi(av[1]), stoi(av[5]), stoi(av[2]) * 1000,
+			stoi(av[3]) * 1000, stoi(av[4]) * 1000, 0, qmut, NULL,
 			malloc(sizeof(pthread_mutex_t) * stoi(av[1]))};
 	if (!table.forks)
 		return (exit_(2, &table));
