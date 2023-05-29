@@ -22,7 +22,7 @@ GREEN		= 	\033[0;32m
 RESET		=	\033[0m
 
 $(NAME):		$(OBJ)
-				$(CC) $(OBJ) -o $(NAME) -pthread #-g -fsanitize=thread
+				$(CC) $(OBJ) -o $(NAME) -pthread -g -fsanitize=thread
 				make done
 
 $(OBJ):	 		$(SRC)
