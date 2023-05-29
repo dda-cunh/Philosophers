@@ -6,7 +6,7 @@
 /*   By: dda-cunh <dda-cunh@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/19 15:09:37 by dda-cunh          #+#    #+#             */
-/*   Updated: 2023/05/29 13:50:01 by dda-cunh         ###   ########.fr       */
+/*   Updated: 2023/05/29 14:11:11 by dda-cunh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,8 +48,6 @@ int	exit_(int status, t_table *table)
 		printf("Error on sem creation\n");
 	else if (status == 4)
 		printf("Error on philo creation\n");
-	// else if (status == 5)
-	// 	printf("Error on pthread join\n");
 	return (status);
 }
 
