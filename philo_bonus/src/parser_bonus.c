@@ -1,16 +1,16 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   parser.c                                           :+:      :+:    :+:   */
+/*   parser_bonus.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: dda-cunh <dda-cunh@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/19 15:02:12 by dda-cunh          #+#    #+#             */
-/*   Updated: 2023/05/29 14:08:52 by dda-cunh         ###   ########.fr       */
+/*   Updated: 2023/05/29 14:01:43 by dda-cunh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../inc/philosophers.h"
+#include "../inc/philosophers_bonus.h"
 
 int	sncmp(const char *s1, const char *s2, unsigned int n)
 {
