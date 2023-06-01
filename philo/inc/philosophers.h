@@ -6,7 +6,7 @@
 /*   By: dda-cunh <dda-cunh@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/19 14:39:37 by dda-cunh          #+#    #+#             */
-/*   Updated: 2023/05/27 13:36:28 by dda-cunh         ###   ########.fr       */
+/*   Updated: 2023/05/31 19:07:13 by dda-cunh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,7 +48,7 @@ typedef struct s_philos
 {
 	int				n;
 	int				n_eat;
-	unsigned long	last_eat;
+	unsigned long	*last_eat;
 	pthread_t		philo;
 	t_table			*t;
 }	t_philos;
@@ -86,13 +86,14 @@ int				sisnum(const char *s);
 /* ************************************************************************** */
 int				i_lock(t_table *t, t_philos *phi, char fos);
 int				exit_(int status, t_table *table);
-t_philos		*init_philo(t_table *table);
 unsigned long	gtime(void);
+t_philos		*init_philo(t_table *table);
 
 /* ************************************************************************** */
 /*                                 task.c                                     */
 /* ************************************************************************** */
-int				do_task(t_act action, t_table *table, t_philos *philo);
+void			*death(void *arg);
+int				do_task(t_act action, t_table *table);
 int				sleep_(t_table *t, t_philos *phi);
 int				eat(t_table *t, t_philos *phi);
 

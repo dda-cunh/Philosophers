@@ -6,7 +6,7 @@
 /*   By: dda-cunh <dda-cunh@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/19 15:09:37 by dda-cunh          #+#    #+#             */
-/*   Updated: 2023/05/27 13:05:45 by dda-cunh         ###   ########.fr       */
+/*   Updated: 2023/05/31 18:57:42 by dda-cunh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,13 +37,20 @@ static void	clean(t_table *table)
 			free(table->forks);
 		}
 		if (table->philos)
+		{
+			i = -1;
+			while (++i < table->n)
+				free(table->philos[i].last_eat);
 			free(table->philos);
+		}
+		pthread_mutex_destroy(&table->qmut);
+		free(table);
 	}
 }
 
-int	exit_(int status, t_table *table)
+int	exit_(int status, t_table *t)
 {
-	clean(table);
+	clean(t);
 	if (status == 1)
 		printf("Bad args\n");
 	else if (status == 2)
@@ -59,15 +66,20 @@ int	exit_(int status, t_table *table)
 
 t_philos	*init_philo(t_table *table)
 {
-	int			i;
-	t_philos	*phi;
+	unsigned long	*time;
+	t_philos		*phi;
+	int				i;
 
 	phi = malloc(sizeof(t_philos) * table->n);
 	if (!phi)
 		return (NULL);
 	i = -1;
 	while (++i < table->n)
-		phi[i] = (t_philos){i + 1, table->n_eat, table->s_time, 0, table};
+	{
+		time = malloc(sizeof(unsigned long));
+		*time = table->s_time;
+		phi[i] = (t_philos){i + 1, 0, time, 0, table};
+	}
 	return (phi);
 }
 
