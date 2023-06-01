@@ -6,62 +6,65 @@
 /*   By: dda-cunh <dda-cunh@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/18 15:32:33 by dda-cunh          #+#    #+#             */
-/*   Updated: 2023/05/29 13:49:23 by dda-cunh         ###   ########.fr       */
+/*   Updated: 2023/06/01 15:05:41 by dda-cunh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../inc/philosophers_bonus.h"
+#include <unistd.h>
 
 static int	*cycle(t_philos *p)
 {
 	unsigned long	interval;
+	pthread_t		reaper;
 
 	if (p->t->n_eat == 0)
-		p->n_eat = 1;
+		p->n_eat = -1;
+	pthread_create(&reaper, NULL, &death, p);
+	pthread_detach(reaper);
 	if (p->t->n == 1)
 	{
-		do_task((t_act){p->n, PICK, PI, (gtime() - p->t->s_time)}, p->t, p);
+		do_task((t_act){p->n, PICK, PI, (gtime() - p->t->s_time)}, p->t);
 		usleep(p->t->t_die);
-		do_task((t_act){p->n, DEAD, DY, (gtime() - p->t->s_time)}, p->t, p);
 		return (0);
 	}
 	while (p->n_eat)
 	{
 		if (eat(p->t, p))
 			break ;
+		p->n_eat--;
 		if (sleep_(p->t, p))
 			break ;
 		interval = gtime();
-		if (do_task((t_act){p->n, THINK, TH, interval - p->t->s_time}, p->t, p))
+		if (do_task((t_act){p->n, THINK, TH, interval - p->t->s_time}, p->t))
 			break ;
 		usleep((p->t->n * 250) - (gtime() - interval) / 1000);
 	}
+	p->last_eat = gtime();
 	return (0);
 }
 
 static int	philo(t_table *table)
 {
-	int	i;
-	int	pid;
+	t_philos	philo;
+	int			i;
 
 	table->s_time = gtime();
-	table->philos = init_philo(table);
-	if (!table->philos)
-		return (exit_(2, table));
 	i = -1;
 	while (++i < table->n)
 	{
-		pid = fork();
-		if (pid == -1)
+		philo = (t_philos){i + 1, table->n_eat, table->s_time, fork(), table};
+		if (philo.pid == -1)
 			return (exit_(4, table));
-		else if (pid == 0)
+		else if (philo.pid == 0)
 		{
-			table->philos[i].pid = pid;
-			cycle(&table->philos[i]);
+			cycle(&philo);
 			exit(0);
 		}
 	}
 	waitpid(-1, NULL, 0);
+	if (table->n_eat)
+		usleep(table->t_eat);
 	return (exit_(0, table));
 }
 
@@ -77,11 +80,9 @@ int	main(int ac, char **av)
 	forks = sem_open("/forks", O_CREAT, 0777, stoi(av[1]));
 	if (print == SEM_FAILED || forks == SEM_FAILED)
 		return (exit_(3, NULL));
-	if (ac == 5)
-		table = (t_table){stoi(av[1]), 0, stoi(av[2]) * 1000, stoi(av[3])
-			* 1000, stoi(av[4]) * 1000, 0, print, forks, NULL};
-	else
-		table = (t_table){stoi(av[1]), stoi(av[5]), stoi(av[2]) * 1000,
-			stoi(av[3]) * 1000, stoi(av[4]) * 1000, 0, print, forks, NULL};
+	table = (t_table){stoi(av[1]), 0, stoi(av[2]) * 1000, stoi(av[3])
+		* 1000, stoi(av[4]) * 1000, 0, print, forks};
+	if (ac == 6)
+		table.n_eat = stoi(av[5]);
 	return (philo(&table));
 }

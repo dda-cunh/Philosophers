@@ -6,7 +6,7 @@
 /*   By: dda-cunh <dda-cunh@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/19 15:09:37 by dda-cunh          #+#    #+#             */
-/*   Updated: 2023/05/29 14:12:56 by dda-cunh         ###   ########.fr       */
+/*   Updated: 2023/06/01 15:17:23 by dda-cunh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,8 +29,6 @@ static void	clean(t_table *table)
 	{
 		sem_unlink("/forks");
 		sem_unlink("/print");
-		if (table->philos)
-			free(table->philos);
 	}
 }
 
@@ -41,25 +39,9 @@ int	exit_(int status, t_table *table)
 		kill(0, SIGKILL);
 	if (status == 1)
 		printf("Bad args\n");
-	else if (status == 2)
-		printf("Error on Malloc\n");
 	else if (status == 3)
 		printf("Error on sem creation\n");
 	else if (status == 4)
 		printf("Error on philo creation\n");
 	return (status);
-}
-
-t_philos	*init_philo(t_table *table)
-{
-	int			i;
-	t_philos	*phi;
-
-	phi = malloc(sizeof(t_philos) * table->n);
-	if (!phi)
-		return (NULL);
-	i = -1;
-	while (++i < table->n)
-		phi[i] = (t_philos){i + 1, table->n_eat, table->s_time, 0, table};
-	return (phi);
 }

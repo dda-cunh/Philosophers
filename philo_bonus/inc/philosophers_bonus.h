@@ -6,7 +6,7 @@
 /*   By: dda-cunh <dda-cunh@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/19 14:39:37 by dda-cunh          #+#    #+#             */
-/*   Updated: 2023/05/29 14:07:04 by dda-cunh         ###   ########.fr       */
+/*   Updated: 2023/06/01 14:43:57 by dda-cunh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,7 +67,6 @@ typedef struct s_table
 	unsigned long	s_time;
 	sem_t			*print;
 	sem_t			*forks;
-	t_philos		*philos;
 }	t_table;
 
 /* ************************************************************************** */
@@ -96,7 +95,8 @@ unsigned long	gtime(void);
 /* ************************************************************************** */
 /*                                 task_bonus.c                               */
 /* ************************************************************************** */
-int				do_task(t_act action, t_table *table, t_philos *philo);
+void			*death(void *arg);
+int				do_task(t_act action, t_table *table);
 int				sleep_(t_table *t, t_philos *phi);
 int				eat(t_table *t, t_philos *phi);
 
