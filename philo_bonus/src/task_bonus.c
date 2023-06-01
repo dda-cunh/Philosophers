@@ -6,7 +6,7 @@
 /*   By: dda-cunh <dda-cunh@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/19 20:34:29 by dda-cunh          #+#    #+#             */
-/*   Updated: 2023/06/01 15:17:20 by dda-cunh         ###   ########.fr       */
+/*   Updated: 2023/06/01 15:28:40 by dda-cunh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,6 +26,7 @@ void	*death(void *arg)
 		if (gtime() - p->last_eat >= p->t->t_die)
 		{
 			do_task((t_act){p->n, DEAD, DY, (gtime() - p->t->s_time)}, p->t);
+			p->t->rip = 1;
 			exit_(0, p->t);
 			return (NULL);
 		}
@@ -68,7 +69,8 @@ int	do_task(t_act action, t_table *table)
 		rip = 1;
 		action.str = DY;
 	}
-	printf("%lu\t%d\t%s\n", action.time / 1000, action.philo, action.str);
+	if (table->rip == 0)
+		printf("%lu\t%d\t%s\n", action.time / 1000, action.philo, action.str);
 	sem_post(table->print);
 	return (0);
 }

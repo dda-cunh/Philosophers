@@ -6,7 +6,7 @@
 /*   By: dda-cunh <dda-cunh@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/19 14:39:37 by dda-cunh          #+#    #+#             */
-/*   Updated: 2023/06/01 14:43:57 by dda-cunh         ###   ########.fr       */
+/*   Updated: 2023/06/01 15:27:30 by dda-cunh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,6 +61,7 @@ typedef struct s_table
 {
 	int				n;
 	int				n_eat;
+	int				rip;
 	unsigned long	t_die;
 	unsigned long	t_eat;
 	unsigned long	t_sleep;
