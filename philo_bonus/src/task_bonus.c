@@ -6,11 +6,12 @@
 /*   By: dda-cunh <dda-cunh@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/19 20:34:29 by dda-cunh          #+#    #+#             */
-/*   Updated: 2023/06/01 15:28:40 by dda-cunh         ###   ########.fr       */
+/*   Updated: 2023/06/02 15:53:44 by dda-cunh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../inc/philosophers_bonus.h"
+#include <semaphore.h>
 
 void	*death(void *arg)
 {
@@ -22,14 +23,17 @@ void	*death(void *arg)
 	cont = 1;
 	while (cont)
 	{
+		sem_wait(p->t->reapers);
 		cont = p->n_eat;
 		if (gtime() - p->last_eat >= p->t->t_die)
 		{
 			do_task((t_act){p->n, DEAD, DY, (gtime() - p->t->s_time)}, p->t);
 			p->t->rip = 1;
+			sem_post(p->t->reapers);
 			exit_(0, p->t);
 			return (NULL);
 		}
+		sem_post(p->t->reapers);
 		usleep(5000);
 	}
 	return (NULL);
@@ -49,7 +53,10 @@ int	eat(t_table *t, t_philos *phi)
 	do_task((t_act){phi->n, PICK, PI, (gtime() - t->s_time)}, t);
 	sem_wait(t->forks);
 	do_task((t_act){phi->n, PICK, PI, (gtime() - t->s_time)}, t);
+	sem_wait(phi->t->reapers);
 	phi->last_eat = gtime();
+	phi->n_eat--;
+	sem_post(phi->t->reapers);
 	do_task((t_act){phi->n, EAT, EA, (gtime() - t->s_time)}, t);
 	usleep(t->t_eat);
 	sem_post(t->forks);

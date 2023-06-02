@@ -6,7 +6,7 @@
 /*   By: dda-cunh <dda-cunh@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/19 15:09:37 by dda-cunh          #+#    #+#             */
-/*   Updated: 2023/06/01 15:17:23 by dda-cunh         ###   ########.fr       */
+/*   Updated: 2023/06/02 15:50:27 by dda-cunh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,6 +29,7 @@ static void	clean(t_table *table)
 	{
 		sem_unlink("/forks");
 		sem_unlink("/print");
+		sem_unlink("/reapers");
 	}
 }
 

@@ -6,7 +6,7 @@
 /*   By: dda-cunh <dda-cunh@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/19 20:34:29 by dda-cunh          #+#    #+#             */
-/*   Updated: 2023/06/02 14:55:33 by dda-cunh         ###   ########.fr       */
+/*   Updated: 2023/06/02 15:26:23 by dda-cunh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,7 +37,6 @@ void	*death(void *arg)
 			}
 			pthread_mutex_unlock(&t->reapers[i]);
 		}
-		usleep(5000);
 	}
 	return (NULL);
 }
