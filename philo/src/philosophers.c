@@ -6,7 +6,7 @@
 /*   By: dda-cunh <dda-cunh@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/18 15:32:33 by dda-cunh          #+#    #+#             */
-/*   Updated: 2023/06/02 15:02:03 by dda-cunh         ###   ########.fr       */
+/*   Updated: 2023/06/02 16:01:04 by dda-cunh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,7 +37,6 @@ static void	*cycle(void *arg)
 			return (NULL);
 		usleep((p->t->n * 250) - (gtime() - time) / 1000);
 	}
-	*p->last_eat = gtime();
 	return (NULL);
 }
 
