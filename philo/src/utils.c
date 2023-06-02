@@ -6,7 +6,7 @@
 /*   By: dda-cunh <dda-cunh@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/19 15:09:37 by dda-cunh          #+#    #+#             */
-/*   Updated: 2023/05/31 18:57:42 by dda-cunh         ###   ########.fr       */
+/*   Updated: 2023/06/02 16:11:13 by dda-cunh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,32 +25,37 @@ unsigned long	gtime(void)
 
 static void	clean(t_table *table)
 {
-	int			i;
+	int	i;
 
-	if (table)
+	if (table->forks)
 	{
-		if (table->forks)
-		{
-			i = -1;
-			while (++i < table->n)
-				pthread_mutex_destroy(&(table->forks[i]));
-			free(table->forks);
-		}
-		if (table->philos)
-		{
-			i = -1;
-			while (++i < table->n)
-				free(table->philos[i].last_eat);
-			free(table->philos);
-		}
-		pthread_mutex_destroy(&table->qmut);
-		free(table);
+		i = -1;
+		while (++i < table->n)
+			pthread_mutex_destroy(&(table->forks[i]));
+		free(table->forks);
 	}
+	if (table->reapers)
+	{
+		i = -1;
+		while (++i < table->n)
+			pthread_mutex_destroy(&(table->reapers[i]));
+		free(table->reapers);
+	}
+	if (table->philos)
+	{
+		i = -1;
+		while (++i < table->n)
+			free(table->philos[i].last_eat);
+		free(table->philos);
+	}
+	pthread_mutex_destroy(&table->qmut);
+	free(table);
 }
 
 int	exit_(int status, t_table *t)
 {
-	clean(t);
+	if (t)
+		clean(t);
 	if (status == 1)
 		printf("Bad args\n");
 	else if (status == 2)
