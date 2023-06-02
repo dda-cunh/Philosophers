@@ -6,7 +6,7 @@
 /*   By: dda-cunh <dda-cunh@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/18 15:32:33 by dda-cunh          #+#    #+#             */
-/*   Updated: 2023/05/31 19:51:13 by dda-cunh         ###   ########.fr       */
+/*   Updated: 2023/06/02 15:02:03 by dda-cunh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,13 +28,13 @@ static void	*cycle(void *arg)
 	{
 		if (eat(p->t, p))
 			return (NULL);
-		p->n_eat--;
 		time = gtime();
 		if (do_task((t_act){p->n, SLEEP, SL, time - p->t->s_time}, p->t))
 			return (NULL);
 		usleep(p->t->t_sleep - (gtime() - time));
 		time = gtime();
-		do_task((t_act){p->n, THINK, TH, time - p->t->s_time}, p->t);
+		if (do_task((t_act){p->n, THINK, TH, time - p->t->s_time}, p->t))
+			return (NULL);
 		usleep((p->t->n * 250) - (gtime() - time) / 1000);
 	}
 	*p->last_eat = gtime();
@@ -83,16 +83,17 @@ int	main(int ac, char **av)
 	table = malloc(sizeof(t_table));
 	if (!table)
 		return (exit_(2, NULL));
-	*table = (t_table){stoi(av[1]), 0, stoi(av[2]) * 1000,
-		stoi(av[3]) * 1000, stoi(av[4]) * 1000, 0, qmut, NULL,
-		malloc(sizeof(pthread_mutex_t) * stoi(av[1]))};
-	if (!table->forks)
+	*table = (t_table){stoi(av[1]), 0, stoi(av[2]) * 1000, stoi(av[3]) * 1000,
+		stoi(av[4]) * 1000, 0, qmut, NULL, malloc(sizeof(pthread_mutex_t)
+			* stoi(av[1])), malloc(sizeof(pthread_mutex_t) * stoi(av[1]))};
+	if (!table->forks || ! table->reapers)
 		return (exit_(2, table));
 	if (ac == 6)
 		table->n_eat = stoi(av[5]);
 	i = -1;
 	while (++i < table->n)
-		if (pthread_mutex_init(&table->forks[i], NULL))
+		if (pthread_mutex_init(&table->forks[i], NULL)
+			|| pthread_mutex_init(&table->reapers[i], NULL))
 			return (exit_(3, table));
 	return (philo(table));
 }

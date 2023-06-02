@@ -6,7 +6,7 @@
 /*   By: dda-cunh <dda-cunh@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/19 14:39:37 by dda-cunh          #+#    #+#             */
-/*   Updated: 2023/05/31 19:07:13 by dda-cunh         ###   ########.fr       */
+/*   Updated: 2023/06/02 14:46:08 by dda-cunh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,6 +64,7 @@ typedef struct s_table
 	pthread_mutex_t	qmut;
 	t_philos		*philos;
 	pthread_mutex_t	*forks;
+	pthread_mutex_t	*reapers;
 }	t_table;
 
 /* ************************************************************************** */
