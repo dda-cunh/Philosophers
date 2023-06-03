@@ -6,7 +6,7 @@
 /*   By: dda-cunh <dda-cunh@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/19 15:09:37 by dda-cunh          #+#    #+#             */
-/*   Updated: 2023/06/02 16:11:13 by dda-cunh         ###   ########.fr       */
+/*   Updated: 2023/06/03 14:33:39 by dda-cunh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -83,7 +83,7 @@ t_philos	*init_philo(t_table *table)
 	{
 		time = malloc(sizeof(unsigned long));
 		*time = table->s_time;
-		phi[i] = (t_philos){i + 1, 0, time, 0, table};
+		phi[i] = (t_philos){i + 1, time, 0, table};
 	}
 	return (phi);
 }

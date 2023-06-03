@@ -6,7 +6,7 @@
 /*   By: dda-cunh <dda-cunh@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/19 14:39:37 by dda-cunh          #+#    #+#             */
-/*   Updated: 2023/06/02 14:46:08 by dda-cunh         ###   ########.fr       */
+/*   Updated: 2023/06/03 14:33:31 by dda-cunh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,7 @@
 
 # include <stdio.h>
 # include <stdlib.h>
+# include <limits.h>
 # include <unistd.h>
 # include <pthread.h>
 # include <sys/time.h>
@@ -47,7 +48,6 @@ typedef struct s_act
 typedef struct s_philos
 {
 	int				n;
-	int				n_eat;
 	unsigned long	*last_eat;
 	pthread_t		philo;
 	t_table			*t;
@@ -57,6 +57,7 @@ typedef struct s_table
 {
 	int				n;
 	int				n_eat;
+	int				eaten;
 	unsigned long	t_die;
 	unsigned long	t_eat;
 	unsigned long	t_sleep;
@@ -95,7 +96,7 @@ t_philos		*init_philo(t_table *table);
 /* ************************************************************************** */
 void			*death(void *arg);
 int				do_task(t_act action, t_table *table);
-int				sleep_(t_table *t, t_philos *phi);
+int				sleep_(t_philos *phi);
 int				eat(t_table *t, t_philos *phi);
 
 #endif
