@@ -6,11 +6,19 @@
 /*   By: dda-cunh <dda-cunh@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/18 15:32:33 by dda-cunh          #+#    #+#             */
-/*   Updated: 2023/06/02 15:51:59 by dda-cunh         ###   ########.fr       */
+/*   Updated: 2023/06/03 15:46:26 by dda-cunh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../inc/philosophers_bonus.h"
+
+static int	handle_one(t_table *t)
+{
+	do_task((t_act){1, PICK, PI}, t);
+	usleep(t->t_die);
+	do_task((t_act){1, DEAD, DY}, t);
+	return (exit_(0, t));
+}
 
 static int	*cycle(t_philos *p)
 {
@@ -23,7 +31,7 @@ static int	*cycle(t_philos *p)
 	pthread_detach(reaper);
 	if (p->t->n == 1)
 	{
-		do_task((t_act){p->n, PICK, PI, (gtime() - p->t->s_time)}, p->t);
+		do_task((t_act){p->n, PICK, PI}, p->t);
 		usleep(p->t->t_die);
 		return (0);
 	}
@@ -33,7 +41,7 @@ static int	*cycle(t_philos *p)
 			break ;
 		sleep_(p->t, p);
 		interval = gtime();
-		if (do_task((t_act){p->n, THINK, TH, interval - p->t->s_time}, p->t))
+		if (do_task((t_act){p->n, THINK, TH}, p->t))
 			break ;
 		usleep((p->t->n * 250) - (gtime() - interval) / 1000);
 	}
@@ -46,6 +54,8 @@ static int	philo(t_table *table)
 	int			i;
 
 	table->s_time = gtime();
+	if (table->n == 1)
+		return (handle_one(table));
 	i = -1;
 	while (++i < table->n)
 	{

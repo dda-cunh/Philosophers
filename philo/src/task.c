@@ -6,7 +6,7 @@
 /*   By: dda-cunh <dda-cunh@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/19 20:34:29 by dda-cunh          #+#    #+#             */
-/*   Updated: 2023/06/03 15:17:08 by dda-cunh         ###   ########.fr       */
+/*   Updated: 2023/06/03 15:57:45 by dda-cunh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,8 +41,7 @@ void	*death(void *arg)
 			pthread_mutex_lock(&t->reapers[i]);
 			if (gtime() - *(t->philos[i].last_eat) >= t->t_die)
 			{
-				do_task((t_act){t->philos[i].n, DEAD, DY, (gtime()
-						- t->philos[i].t->s_time)}, t);
+				do_task((t_act){t->philos[i].n, DEAD, DY}, t);
 				pthread_mutex_unlock(&t->reapers[i]);
 				return (NULL);
 			}
@@ -54,10 +53,7 @@ void	*death(void *arg)
 
 int	sleep_(t_philos *phi)
 {
-	unsigned long	time;
-
-	time = gtime();
-	if (do_task((t_act){phi->n, SLEEP, SL, time - phi->t->s_time}, phi->t))
+	if (do_task((t_act){phi->n, SLEEP, SL}, phi->t))
 		return (1);
 	usleep(phi->t->t_sleep);
 	return (0);
@@ -71,7 +67,7 @@ int	eat(t_table *t, t_philos *phi)
 	lock1 = &t->forks[i_lock(t, phi, 'f')];
 	lock2 = &t->forks[i_lock(t, phi, 's')];
 	pthread_mutex_lock(lock1);
-	if (do_task((t_act){phi->n, PICK, PI, (gtime() - t->s_time)}, t))
+	if (do_task((t_act){phi->n, PICK, PI}, t))
 	{
 		pthread_mutex_unlock(lock1);
 		return (1);
@@ -80,8 +76,8 @@ int	eat(t_table *t, t_philos *phi)
 	pthread_mutex_lock(&phi->t->reapers[phi->n - 1]);
 	*(phi->last_eat) = gtime();
 	pthread_mutex_unlock(&phi->t->reapers[phi->n - 1]);
-	do_task((t_act){phi->n, PICK, PI, (*(phi->last_eat) - t->s_time)}, t);
-	do_task((t_act){phi->n, EAT, EA, *(phi->last_eat) - t->s_time}, t);
+	do_task((t_act){phi->n, PICK, PI}, t);
+	do_task((t_act){phi->n, EAT, EA}, t);
 	usleep(t->t_eat);
 	pthread_mutex_unlock(lock1);
 	pthread_mutex_unlock(lock2);
@@ -90,7 +86,8 @@ int	eat(t_table *t, t_philos *phi)
 
 int	do_task(t_act action, t_table *table)
 {
-	static int	rip = 0;
+	unsigned long	frame;
+	static int		rip = 0;
 
 	pthread_mutex_lock(&table->qmut);
 	if (rip)
@@ -98,12 +95,13 @@ int	do_task(t_act action, t_table *table)
 		pthread_mutex_unlock(&table->qmut);
 		return (1);
 	}
+	frame = gtime() - table->s_time;
 	if (action.action == DEAD)
 	{
 		action.str = DY;
 		rip = 1;
 	}
-	printf("%lu\t%d\t%s\n", action.time / 1000, action.philo, action.str);
+	printf("%lu\t%d\t%s\n", frame / 1000, action.philo, action.str);
 	pthread_mutex_unlock(&table->qmut);
 	return (0);
 }

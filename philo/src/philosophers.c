@@ -6,7 +6,7 @@
 /*   By: dda-cunh <dda-cunh@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/18 15:32:33 by dda-cunh          #+#    #+#             */
-/*   Updated: 2023/06/03 15:26:28 by dda-cunh         ###   ########.fr       */
+/*   Updated: 2023/06/03 15:55:53 by dda-cunh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,9 +14,9 @@
 
 static int	handle_one(t_table *t)
 {
-	do_task((t_act){1, PICK, PI, gtime() - t->s_time}, t);
+	do_task((t_act){1, PICK, PI}, t);
 	usleep(t->t_die);
-	do_task((t_act){1, DEAD, DY, gtime() - t->s_time}, t);
+	do_task((t_act){1, DEAD, DY}, t);
 	return (exit_(0, t));
 }
 
@@ -34,7 +34,7 @@ static void	*cycle(void *arg)
 			return (NULL);
 		sleep_(p);
 		time = gtime();
-		if (do_task((t_act){p->n, THINK, TH, time - p->t->s_time}, p->t))
+		if (do_task((t_act){p->n, THINK, TH}, p->t))
 			return (NULL);
 		pthread_mutex_lock(&p->t->qmut);
 		p->t->eaten++;

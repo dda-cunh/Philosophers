@@ -6,7 +6,7 @@
 /*   By: dda-cunh <dda-cunh@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/19 14:39:37 by dda-cunh          #+#    #+#             */
-/*   Updated: 2023/06/03 14:33:31 by dda-cunh         ###   ########.fr       */
+/*   Updated: 2023/06/03 15:51:15 by dda-cunh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,7 +42,6 @@ typedef struct s_act
 	int				philo;
 	t_state			action;
 	char			*str;
-	unsigned long	time;
 }	t_act;
 
 typedef struct s_philos
