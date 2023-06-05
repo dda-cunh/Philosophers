@@ -6,7 +6,7 @@
 /*   By: dda-cunh <dda-cunh@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/19 20:34:29 by dda-cunh          #+#    #+#             */
-/*   Updated: 2023/06/03 15:57:45 by dda-cunh         ###   ########.fr       */
+/*   Updated: 2023/06/05 11:57:30 by dda-cunh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,8 +14,10 @@
 
 static int	stopeat(t_table *t)
 {
+	if (t->n_eat == INT_MAX)
+		return (0);
 	pthread_mutex_lock(&t->qmut);
-	if (t->eaten > t->n * t->n_eat)
+	if (t->eaten > t->n - 1 * t->n_eat)
 	{
 		pthread_mutex_unlock(&t->qmut);
 		return (1);
@@ -39,7 +41,7 @@ void	*death(void *arg)
 			if (stopeat(t))
 				return (NULL);
 			pthread_mutex_lock(&t->reapers[i]);
-			if (gtime() - *(t->philos[i].last_eat) >= t->t_die)
+			if (gtime() - *(t->philos[i].last_eat) > t->t_die)
 			{
 				do_task((t_act){t->philos[i].n, DEAD, DY}, t);
 				pthread_mutex_unlock(&t->reapers[i]);
@@ -90,7 +92,7 @@ int	do_task(t_act action, t_table *table)
 	static int		rip = 0;
 
 	pthread_mutex_lock(&table->qmut);
-	if (rip)
+	if (rip || table->eaten > table->n * table->n_eat)
 	{
 		pthread_mutex_unlock(&table->qmut);
 		return (1);

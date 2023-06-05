@@ -6,11 +6,12 @@
 /*   By: dda-cunh <dda-cunh@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/18 15:32:33 by dda-cunh          #+#    #+#             */
-/*   Updated: 2023/06/03 15:55:53 by dda-cunh         ###   ########.fr       */
+/*   Updated: 2023/06/05 11:47:12 by dda-cunh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../inc/philosophers.h"
+#include <limits.h>
 
 static int	handle_one(t_table *t)
 {
