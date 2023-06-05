@@ -6,12 +6,11 @@
 /*   By: dda-cunh <dda-cunh@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/18 15:32:33 by dda-cunh          #+#    #+#             */
-/*   Updated: 2023/06/05 11:47:12 by dda-cunh         ###   ########.fr       */
+/*   Updated: 2023/06/05 12:41:05 by dda-cunh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../inc/philosophers.h"
-#include <limits.h>
 
 static int	handle_one(t_table *t)
 {
@@ -39,7 +38,7 @@ static void	*cycle(void *arg)
 			return (NULL);
 		pthread_mutex_lock(&p->t->qmut);
 		p->t->eaten++;
-		if (p->t->eaten > p->t->n * p->t->n_eat)
+		if (p->t->n_eat != -1 && (long)(p->t->eaten > p->t->n * p->t->n_eat))
 			cont = 0;
 		pthread_mutex_unlock(&p->t->qmut);
 		usleep((p->t->n * 250) - (gtime() - time) / 1000);
@@ -88,7 +87,7 @@ int	main(int ac, char **av)
 	table = malloc(sizeof(t_table));
 	if (!table)
 		return (exit_(2, NULL));
-	*table = (t_table){stoi(av[1]), INT_MAX, 0, stoi(av[2]) * 1000, stoi(av[3])
+	*table = (t_table){stoi(av[1]), -1, 0, stoi(av[2]) * 1000, stoi(av[3])
 		* 1000, stoi(av[4]) * 1000, 0, qmut, NULL,
 		malloc(sizeof(pthread_mutex_t) * stoi(av[1])),
 		malloc(sizeof(pthread_mutex_t) * stoi(av[1]))};

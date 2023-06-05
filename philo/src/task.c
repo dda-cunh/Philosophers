@@ -6,7 +6,7 @@
 /*   By: dda-cunh <dda-cunh@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/19 20:34:29 by dda-cunh          #+#    #+#             */
-/*   Updated: 2023/06/05 11:57:30 by dda-cunh         ###   ########.fr       */
+/*   Updated: 2023/06/05 12:40:51 by dda-cunh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,10 +14,10 @@
 
 static int	stopeat(t_table *t)
 {
-	if (t->n_eat == INT_MAX)
+	if (t->n_eat == -1)
 		return (0);
 	pthread_mutex_lock(&t->qmut);
-	if (t->eaten > t->n - 1 * t->n_eat)
+	if (t->eaten > (long)t->n * t->n_eat)
 	{
 		pthread_mutex_unlock(&t->qmut);
 		return (1);
@@ -86,24 +86,24 @@ int	eat(t_table *t, t_philos *phi)
 	return (0);
 }
 
-int	do_task(t_act action, t_table *table)
+int	do_task(t_act action, t_table *t)
 {
 	unsigned long	frame;
 	static int		rip = 0;
 
-	pthread_mutex_lock(&table->qmut);
-	if (rip || table->eaten > table->n * table->n_eat)
+	pthread_mutex_lock(&t->qmut);
+	if (rip || (t->n_eat != -1 && t->eaten > (long)t->n * t->n_eat))
 	{
-		pthread_mutex_unlock(&table->qmut);
+		pthread_mutex_unlock(&t->qmut);
 		return (1);
 	}
-	frame = gtime() - table->s_time;
+	frame = gtime() - t->s_time;
 	if (action.action == DEAD)
 	{
 		action.str = DY;
 		rip = 1;
 	}
 	printf("%lu\t%d\t%s\n", frame / 1000, action.philo, action.str);
-	pthread_mutex_unlock(&table->qmut);
+	pthread_mutex_unlock(&t->qmut);
 	return (0);
 }
